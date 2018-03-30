@@ -1,22 +1,23 @@
 import numpy as np
 from scipy.io import wavfile
 
-Fs = 44100
-f1 = 1000
-f2 = 700
-sample = 44100
-x = np.arange(sample*10)
+class Wav_Manager():
+	def __init__(self, fs=44100, freq=[440], s=44100, a=1000, t=10):
+		
+		self.A = a
+		self.Fs = fs
+		self.sample = 44100
+		self.frequencies = freq
+		self.x = np.arange(self.sample*t)
+		
+		self.sum = np.zeros(self.sample*t)
 
-w1 = np.sin(2 * np.pi * f1 * x/Fs)
-w2 = np.sin(2 * np.pi * f2 * x/Fs)
-s_waves = [w1, w2]
+		for f in self.frequencies:
+			self.sum = self.sum + np.sin(2 * np.pi * f * self.x/self.Fs)
 
-sum = np.zeros(sample*10)
+		self.y = np.array(self.A * self.sum, dtype='int16')
 
-for w in s_waves:
-	sum = sum + w
-
-y = np.array(1000 * sum, dtype='int16')
-print (y)
-
-wavfile.write('test.wav', Fs, y)
+		wavfile.write('test.wav', self.Fs, self.y)
+		
+if __name__ == "__main__":
+	w = Wav_Manager()
