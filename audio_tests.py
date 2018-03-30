@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 from scipy.io import wavfile
 from scipy.fftpack import fft
 
+def test():
+	return 'worked'
+
 #subprocess.call("ffmpeg -i Recording.m4a test.wav")
 
 file = '440_sine.wav'
@@ -20,8 +23,6 @@ fft_out = fft(data)
 
 plt.plot(data, np.abs(fft_out))
 plt.show()
-
-
 
 sampFreq, snd = wavfile.read(file)
 snd = snd / (2.**15)
