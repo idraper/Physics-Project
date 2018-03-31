@@ -1,6 +1,8 @@
 import numpy as np
 from scipy.io import wavfile
 
+from key import Key
+
 class Wav_Manager():
 	def __init__(self, fs=44100, s=44100, a=1000, t=10):
 		self.A = a
@@ -28,3 +30,8 @@ if __name__ == "__main__":
 	w = Wav_Manager()
 	w.newWave([1500, 1000, 3000])
 	w.saveToFile()
+	
+	k = Key('this is a test to see how the program works')
+	print (k.getMessageLexo())
+	k.saveToFile()
+	k.readFile()
