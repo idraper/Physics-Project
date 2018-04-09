@@ -1,7 +1,7 @@
 import numpy as np
 
 class Key():
-	def __init__(self, m='', sF=1000, sO=100, f='encryption'):
+	def __init__(self, m='', sF=5000, sO=500, f='encryption'):
 		self.data = m
 		self.size = len(self.data)
 		self.startFreq = sF
@@ -125,7 +125,7 @@ class Key():
 		return chr(num - self.keyVal)
 		
 	def getFrequencies(self):
-		return [self.startFreq + (x*self.offset*5) for x in range(len(self.getMessageList()))]
+		return [self.startFreq + (x*self.offset) for x in range(len(self.getMessageList()))]
 		
 if __name__ == '__main__':
 	key = Key()

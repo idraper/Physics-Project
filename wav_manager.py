@@ -4,7 +4,7 @@ from scipy.io import wavfile
 from key import Key
 
 class Wav_Manager():
-	def __init__(self, fs=128000, s=128000, a=1000, t=10):
+	def __init__(self, fs=128000, s=128000, a=100, t=10):
 		self.A = a
 		self.Fs = fs
 		self.sample = s
@@ -88,7 +88,8 @@ if __name__ == "__main__":
 	")
 	'''
 	
-	k = Key("abcdefghijklmnopqrstuvwxyz.)'/\\,ABCDEFGHIJKLMNOP")
+	#k = Key("abcdefghijklmnopqrstuvwxyz.)'/\\,ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890(*&^%")
+	k = Key(" !\"#$%'()*+,-./1234567890:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]\\^_`~abc")
 	print ('Original:\n', k.getMessage())
 	k.saveToFile()
 	print ()
