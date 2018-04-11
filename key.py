@@ -1,8 +1,8 @@
 import numpy as np
 
 class Key():
-	def __init__(self, m='', sF=5000, sO=500, f='encryption'):
-		self.data = m
+	def __init__(self, m='', sF=5000, sO=250, f='encryption'):
+		self.data = m.lower()
 		self.size = len(self.data)
 		self.startFreq = sF
 		self.offset = sO
@@ -32,6 +32,10 @@ class Key():
 	def saveToFile(self, fN='key.txt'):
 		f = open(fN, 'w')
 		f.write(self.scramble(len(self.getMessageListFull())))
+		f.write(' ')
+		f.write(self.scramble(self.startFreq))
+		f.write(' ')
+		f.write(self.scramble(self.offset))
 		f.write('\n')
 		
 		order, count = self.getOrderAndCount()
@@ -42,9 +46,6 @@ class Key():
 		self.addData(f, count, 10)
 		f.write('\n')
 		f.write('\n')
-		#self.addData(f, self.getMessageList(), 5)
-		#f.write('\n')
-		#f.write('\n')
 		
 	def getOrderAndCount(self):
 		order = []
@@ -80,7 +81,12 @@ class Key():
 		order = []
 		count = []
 		
-		num = self.unscrambleInt(stuff[0].replace('\n', ''))
+		num, start, offset = stuff[0].replace('\n', '').split()
+		
+		num = self.unscrambleInt(num)
+		start = self.unscrambleInt(start)
+		offset = self.unscrambleInt(offset)
+		
 		stuff.pop(0)
 		tmp = []
 		while stuff[0] != '\n':
@@ -97,11 +103,13 @@ class Key():
 		for x in tmp:
 			count += x
 			
-		return (num, order, count)
+		return (num, start, offset, order, count)
 		
-	def decodeMessage(self, m):
-		num, order, count = self.readFile()
+	def decodeMessage(self, freq):
+		num, start, offset, order, count = self.readFile()
 		out = np.zeros(num, dtype='str')
+		
+		m = self.freqToLexo(freq, start, offset)
 		
 		oPos = 0 	# points to order
 		cPos = 0 	# points to count
@@ -125,16 +133,20 @@ class Key():
 		return chr(num - self.keyVal)
 		
 	def getFrequencies(self):
-		return [self.startFreq + (x*self.offset) for x in range(len(self.getMessageList()))]
+		#return [self.startFreq + (x*self.offset) for x in range(len(self.getMessageList()))]
+		return [self.startFreq + (ord(x)*self.offset) for x in self.getMessageList()]
 		
-if __name__ == '__main__':
-	key = Key()
-	
-
+	def freqToLexo(self, freq, start, offset):
+		return sorted([chr(int((x-start)/offset)) for x in freq])
 	
 	
 	
-
+	
+	
+	
+	
+	
+	
 	
 	
 	
