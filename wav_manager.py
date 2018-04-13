@@ -56,13 +56,14 @@ class Wav_Manager():
 		pya.terminate()
 		print("* Preview completed!")
 		
-	def listen(self):		
-		#plt.pause(.00001)
-		#plt.gcf().clear()
-		#plt.plot(scipy.fftpack.fft(avg)[:1000])
-		#plt.draw()
+	def listen(self):
 		
 		data = np.fromstring(self.stream.read(self.CHUNK),dtype='int16')
+		
+		plt.pause(.00001)
+		plt.gcf().clear()
+		plt.plot(scipy.fftpack.fft(data)[:500])
+		plt.draw()
 		return data
 		
 	def startAudio(self):

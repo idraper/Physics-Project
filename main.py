@@ -19,8 +19,16 @@ if __name__ == "__main__":
 	w.newWave(k.getFrequencies())
 	w.saveToFile()
 	#w.play()
-	#w.listen()
+	w.startAudio()
+	w.startStream()
 	
+	try:
+		while True:
+			w.listen()
+	except KeyboardInterrupt:
+		pass
+	
+	'''
 	conn = Socket()
 	mode = input('Mode: ')
 	if mode == 's':
@@ -31,7 +39,7 @@ if __name__ == "__main__":
 	else:
 		print ('recieving data')
 		print (conn.recieve('192.168.1.133', 8000))
-	
+	'''
 	
 	'''
 	plt.plot(w.getFile()[1][:150])
