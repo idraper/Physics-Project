@@ -1,7 +1,9 @@
-import socket
+import socket, keyboard
 
 class MySocket:
 	def __init__(self, sock=None):
+		self.conn = None
+		self.addr = None
 		if sock is None:
 			self.sock = socket.socket( \
 							socket.AF_INET, socket.SOCK_STREAM)
@@ -12,21 +14,17 @@ class MySocket:
 		self.sock.connect((host, port))
 
 	def send(self, msg):
-		totalsent = 0
-		bin = bytearray(msg, 'utf-8')
-		while totalsent < len(bin):
-			sent = self.sock.send(bin[totalsent:])
-			if sent == 0:
-				raise RuntimeError("socket connection broken")
-			totalsent = totalsent + sent
+		self.conn.send(msg.encode())
 
 	def recieve(self):
-		chunks = []
-		bytes_recd = 0
-		while bytes_recd < len(msg):
-			chunk = self.sock.recv(min(len(msg) - bytes_recd, 2048))
-			if chunk == b'':
-				raise RuntimeError("socket connection broken")
-			chunks.append(chunk)
-			bytes_recd = bytes_recd + len(chunk)
-		return b''.join(chunks)
+		self.sock = socket.socket()
+		self.sock.bind(('',5040))
+		self.sock.listen(1)
+		self.conn, self.addr = self.sock.accept()
+		print ("Connection from: " + str(addr))
+		while True:
+			data = self.conn.recv(1024).decode()
+			if not data or keyboard.is_pressed('a'):
+				break
+			print ("recieved: " + str(data))
+		self.conn.close()
