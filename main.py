@@ -28,13 +28,12 @@ if __name__ == "__main__":
 	conn = Socket()
 	mode = input()
 	if mode == 's':
-		conn.connect('192.168.1.133', 80)
+		conn.connect('192.168.1.133', 5040)
 		print ('sending data')
 		conn.send('test')
 	else:
-		conn.connect('192.168.1.126', 5040)
 		print ('recieving data')
-		conn.recieve()
+		conn.recieve('192.168.1.126', 5040)
 	
 	
 	'''
