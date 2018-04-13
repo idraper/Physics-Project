@@ -5,12 +5,9 @@ import matplotlib.pyplot as plt
 from key import Key
 from wav_manager import Wav_Manager
 from networking import MySocket as Socket
-#from networking import Host as host
-#from networking import Client as client
 
-if __name__ == "__main__":	
-	'''
-	k = Key("new message")
+if __name__ == "__main__":
+	k = Key("new test message")
 	print ('Original:\n', k.getMessage())
 	k.saveToFile()
 	print ()
@@ -23,17 +20,17 @@ if __name__ == "__main__":
 	w.saveToFile()
 	#w.play()
 	#w.listen()
-	'''
 	
 	conn = Socket()
-	mode = input()
+	mode = input('Mode: ')
 	if mode == 's':
 		print ('sending data')
 		conn.connect('192.168.1.133', 8000)
-		conn.send('test')
+		conn.sendKey(k)
+		conn.close()
 	else:
 		print ('recieving data')
-		conn.recieve('192.168.1.133', 8000)
+		print (conn.recieve('192.168.1.133', 8000))
 	
 	
 	'''

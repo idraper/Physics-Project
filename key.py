@@ -1,7 +1,7 @@
 import numpy as np
 
 class Key():
-	def __init__(self, m='', sF=5000, sO=250, f='encryption'):
+	def __init__(self, m='', f='encryption', sF=5000, sO=250):
 		self.data = m.lower()
 		self.size = len(self.data)
 		self.startFreq = sF
@@ -47,16 +47,22 @@ class Key():
 		f.write('\n')
 		f.write('\n')
 		
-	def getOrderAndCount(self):
+	def getOrderAndCount(self, scram=False):
 		order = []
 		count = []
 		for i, d in enumerate(self.getMessageLexo()):
 			c = 0
 			for j, char in enumerate(self.getMessageListFull()):
 				if d == char:
-					order.append(j)
+					if scram:
+						order.append(self.scramble(j))
+					else:
+						order.append(j)
 					c += 1
-			count.append(c)
+			if scram:
+				count.append(self.scramble(c))
+			else:
+				count.append(c)
 		return (order, count)
 			
 	def addData(self, f, data, horizontal):
