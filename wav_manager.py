@@ -15,6 +15,12 @@ class Wav_Manager():
 		self.x = np.arange(int(self.sample*t))
 		self.sum = np.zeros(int(self.sample*t))
 		self.y = None
+		
+		self.CHUNK = 4096 # number of data points to read at a time
+		self.RATE = 44100 # time resolution of the recording device (Hz)
+		self.p = None
+		self.stream = None
+		
 
 	def newWave(self, freq):
 		self.frequencies = freq
@@ -50,35 +56,27 @@ class Wav_Manager():
 		pya.terminate()
 		print("* Preview completed!")
 		
-	def listen(self):
-		CHUNK = 4096 # number of data points to read at a time
-		RATE = 44100 # time resolution of the recording device (Hz)
-
-		p = pyaudio.PyAudio() # start the PyAudio class
-		stream = p.open(format=pyaudio.paInt16,channels=1,rate=RATE,input=True,
-					  frames_per_buffer=CHUNK) #uses default input device
-					  
-		avg = np.zeros(CHUNK, dtype='int16')
-				
-		try:
-			while True:
-				data = np.fromstring(stream.read(CHUNK),dtype='int16')
-				avg = (avg + data) / 2
-				plt.pause(.00001)
-				plt.gcf().clear()
-				plt.plot(scipy.fftpack.fft(avg)[:1000])
-				plt.draw()
-		except KeyboardInterrupt:
-			pass
-
-		stream.stop_stream()
-		stream.close()
-		p.terminate()
+	def listen(self):		
+		#plt.pause(.00001)
+		#plt.gcf().clear()
+		#plt.plot(scipy.fftpack.fft(avg)[:1000])
+		#plt.draw()
 		
-		return avg
+		data = np.fromstring(self.stream.read(self.CHUNK),dtype='int16')
+		return data
 		
+	def startAudio(self):
+		self.p = pyaudio.PyAudio() # start the PyAudio class
+	def endAudio(self):
+		self.p.terminate()
 		
+	def startStream(self):
+		self.stream = self.p.open(format=pyaudio.paInt16,channels=1,rate=self.RATE,input=True, \
+			frames_per_buffer=self.CHUNK) #uses default input device
+	def endStream(self):
+		self.stream.stop_stream()
+		self.stream.close()
 		
-		
+	
 		
 		
