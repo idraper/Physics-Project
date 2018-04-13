@@ -87,7 +87,13 @@ if __name__ == "__main__":
 	'''
 	
 	conn = Socket()
-	conn.connect('192.168.1.133', 80)
+	mode = input()
+	if mode == 's':
+		conn.connect('192.168.1.133', 80)
+		conn.send('test')
+	else:
+		conn.connect('192.168.1.126', 80)
+		print(conn.recieve())
 	
 	
 	'''
