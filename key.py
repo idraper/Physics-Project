@@ -11,6 +11,20 @@ class Key():
 			self.keyVal += ord(char) * num
 		self.keyVal %= 75
 		
+		self.lexData = None
+		self.order = None
+		self.count = None
+		
+		
+	def set(self, num, s, oF, oR, cnt):
+		self.size = num
+		self.lexData = d
+		self.offset = oF
+		self.startFreq = s
+		self.order = oR
+		self.count = cnt
+		
+		
 	def newMessage(self, m):
 		self.data = m
 		
@@ -111,23 +125,37 @@ class Key():
 			
 		return (num, start, offset, order, count)
 		
-	def decodeMessage(self, freq):
-		num, start, offset, order, count = self.readFile()
-		out = np.zeros(num, dtype='str')
-		
-		m = self.freqToLexo(freq, start, offset)
-		
-		oPos = 0 	# points to order
-		cPos = 0 	# points to count
-		
-		for char in m:
-			while count[cPos] > 0:
-				out[order[oPos]] = char
-				oPos += 1
-				count[cPos] -= 1
-			cPos += 1
-		
-		return ''.join(str(x) for x in out)
+	def decodeMessage(self, freq, fromFile=True):
+		if fromFile:
+			num, start, offset, order, count = self.readFile()
+			out = np.zeros(num, dtype='str')
+			
+			m = self.freqToLexo(freq, start, offset)
+			
+			oPos = 0 	# points to order
+			cPos = 0 	# points to count
+			
+			for char in m:
+				while count[cPos] > 0:
+					out[order[oPos]] = char
+					oPos += 1
+					count[cPos] -= 1
+				cPos += 1
+			
+			return ''.join(str(x) for x in out)
+		else:
+			out = np.zeros(self.num, dtype='str')
+			m = self.freqToLexo(freq, self.start, self.offset)
+			
+			for char in m:
+				while self.count[cPos] > 0:
+					out[self.order[oPos]] = char
+					oPos += 1
+					self.count[cPos] -= 1
+				cPos += 1
+			
+			return ''.join(str(x) for x in out)
+			
 				
 	def unscrambleInt(self, num):
 		try:

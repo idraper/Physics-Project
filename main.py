@@ -5,13 +5,14 @@ import matplotlib.pyplot as plt
 from key import Key
 from wav_manager import Wav_Manager
 from networking import MySocket as Socket
+from wave_math import Math
 
 if __name__ == "__main__":
 	k = Key("new test message")
 	print ('Original:\n', k.getMessage())
 	k.saveToFile()
 	print ()
-	print ('Decoded from file:\n', k.decodeMessage(k.getFrequencies()))
+	#print ('Decoded from file:\n', k.decodeMessage(k.getFrequencies(), True))
 	print ()
 	#print (sorted(k.getFrequencies()))
 	
@@ -33,12 +34,15 @@ if __name__ == "__main__":
 	mode = input('Mode: ')
 	if mode == 's':
 		print ('sending data')
-		conn.connect('10.37.165.54', 8000)
+		conn.connect('10.37.107.240', 8000)
 		conn.sendKey(k)
 		conn.close()
 	else:
 		print ('recieving data')
-		print (conn.recieve('10.37.165.54', 8000))
+		num, start, offset, order, count = conn.recieve('10.37.107.240', 8000)
+		k = Key()
+		k.set(num, start, offset, order, count)
+		print ('Decoded from real time:\n', k.decodeMessage(k.getFrequencies()))
 	
 	'''
 	plt.plot(w.getFile()[1][:150])
