@@ -34,23 +34,16 @@ if __name__ == "__main__":
 	mode = input('Mode: ')
 	if mode == 's':
 		print ('sending data')
-		conn.connect('10.16.48.10', 8000)
+		conn.connect('192.168.1.133', 8000)
 		conn.sendKey(k)
 		conn.close()
 	else:
 		print ('recieving data')
-		num, start, offset, order, count = conn.recieve('10.16.48.10', 8000)
-		k = Key("new test message")
+		num, start, offset, order, count = conn.recieve('192.168.1.133', 8000)
+		k = Key("")
 		k.set(num, start, offset, order, count)
-		print ()
-		print ()
-		print (num)
-		print (start)
-		print (offset)
-		print (order)
-		print (count)
-		print ('Decoded from real time:\n', k.decodeMessage(k.getFrequencies()))
-	
+		print ('Decoded from real time:\n', k.decodeMessage([32500, 33750, 29250, 34000, 30750, 13000, 30250, 34750, 32250]))
+		
 	'''
 	plt.plot(w.getFile()[1][:150])
 	plt.show()

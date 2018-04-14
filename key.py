@@ -1,8 +1,8 @@
 import numpy as np
 
 class Key():
-	def __init__(self, m='', f='encryption', sF=5000, sO=250):
-		self.data = m.lower()
+	def __init__(self, me='', f='encryption', sF=5000, sO=250):
+		self.data = me.lower()
 		self.size = len(self.data)
 		self.startFreq = sF
 		self.offset = sO
@@ -16,9 +16,9 @@ class Key():
 		
 		
 	def set(self, num, s, oF, oR, cnt):
-		self.size = int(num, 0)
-		self.offset = int(oF, 0)
-		self.startFreq = int(s, 0)
+		self.size = self.unscrambleInt(int(num, 0))
+		self.offset = self.unscrambleInt(int(oF, 0))
+		self.startFreq = self.unscrambleInt(int(s, 0))
 		self.order = oR
 		self.count = cnt
 		
@@ -128,7 +128,7 @@ class Key():
 		cPos = 0 	# points to count
 		if fromFile:
 			num, start, offset, order, count = self.readFile()
-			out = np.zeros(num, dtype='str')
+			out = np.zeros(num , dtype='str')
 			
 			m = self.freqToLexo(freq, start, offset)
 			
@@ -141,17 +141,13 @@ class Key():
 			
 			return ''.join(str(x) for x in out)
 		else:
-			print ()
-			print ('test')
-			print ('freq', freq)
-			print ('order', self.order)
-			order = [print (x) for x in list(self.order.split())]
-			count = [int(x, 0) for x in list(self.count)]
-			out = np.zeros(self.size, dtype='int16')
+			self.order = self.order[2:-2]
+			self.count = self.count[2:-2]
+			order = [self.unscrambleInt(x) for x in list(self.order.split("', '"))]
+			count = [self.unscrambleInt(x) for x in list(self.count.split("', '"))]
+			out = np.zeros(self.size, dtype='str')
 			m = self.freqToLexo(freq, self.startFreq, self.offset)
-			#print (freq)
 			for char in m:
-				#print (m)
 				while count[cPos] > 0:
 					out[order[oPos]] = char
 					oPos += 1
@@ -160,7 +156,6 @@ class Key():
 			
 			return ''.join(str(x) for x in out)
 			
-				
 	def unscrambleInt(self, num):
 		try:
 			return num - self.keyVal
