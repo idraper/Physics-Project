@@ -7,7 +7,7 @@ import scipy.fftpack
 from key import Key
 
 class Wav_Manager():
-	def __init__(self, fs=128000, s=128000, a=100, t=.1):
+	def __init__(self, fs=44100, s=44100, a=100, t=.1):
 		self.A = a
 		self.Fs = fs
 		self.sample = s
