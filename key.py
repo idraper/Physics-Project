@@ -11,16 +11,14 @@ class Key():
 			self.keyVal += ord(char) * num
 		self.keyVal %= 75
 		
-		self.lexData = None
 		self.order = None
 		self.count = None
 		
 		
 	def set(self, num, s, oF, oR, cnt):
-		self.size = num
-		self.lexData = d
-		self.offset = oF
-		self.startFreq = s
+		self.size = int(num, 0)
+		self.offset = int(oF, 0)
+		self.startFreq = int(s, 0)
 		self.order = oR
 		self.count = cnt
 		
@@ -125,15 +123,14 @@ class Key():
 			
 		return (num, start, offset, order, count)
 		
-	def decodeMessage(self, freq, fromFile=True):
+	def decodeMessage(self, freq, fromFile=False):
+		oPos = 0 	# points to order
+		cPos = 0 	# points to count
 		if fromFile:
 			num, start, offset, order, count = self.readFile()
 			out = np.zeros(num, dtype='str')
 			
 			m = self.freqToLexo(freq, start, offset)
-			
-			oPos = 0 	# points to order
-			cPos = 0 	# points to count
 			
 			for char in m:
 				while count[cPos] > 0:
@@ -144,14 +141,21 @@ class Key():
 			
 			return ''.join(str(x) for x in out)
 		else:
-			out = np.zeros(self.num, dtype='str')
-			m = self.freqToLexo(freq, self.start, self.offset)
-			
+			print ()
+			print ('test')
+			print ('freq', freq)
+			print ('order', self.order)
+			order = [print (x) for x in list(self.order.split())]
+			count = [int(x, 0) for x in list(self.count)]
+			out = np.zeros(self.size, dtype='int16')
+			m = self.freqToLexo(freq, self.startFreq, self.offset)
+			#print (freq)
 			for char in m:
-				while self.count[cPos] > 0:
-					out[self.order[oPos]] = char
+				#print (m)
+				while count[cPos] > 0:
+					out[order[oPos]] = char
 					oPos += 1
-					self.count[cPos] -= 1
+					count[cPos] -= 1
 				cPos += 1
 			
 			return ''.join(str(x) for x in out)

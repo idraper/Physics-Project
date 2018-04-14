@@ -31,7 +31,7 @@ class MySocket:
 			d = self.conn.recv(1024).decode()
 			if not d:
 				break
-			print ("recieved: " + str(d))
+			#print ("recieved: " + str(d))
 			data.append(d)
 		self.conn.close()
 		return data

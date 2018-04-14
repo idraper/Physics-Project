@@ -34,14 +34,21 @@ if __name__ == "__main__":
 	mode = input('Mode: ')
 	if mode == 's':
 		print ('sending data')
-		conn.connect('10.37.107.240', 8000)
+		conn.connect('10.16.48.10', 8000)
 		conn.sendKey(k)
 		conn.close()
 	else:
 		print ('recieving data')
-		num, start, offset, order, count = conn.recieve('10.37.107.240', 8000)
-		k = Key()
+		num, start, offset, order, count = conn.recieve('10.16.48.10', 8000)
+		k = Key("new test message")
 		k.set(num, start, offset, order, count)
+		print ()
+		print ()
+		print (num)
+		print (start)
+		print (offset)
+		print (order)
+		print (count)
 		print ('Decoded from real time:\n', k.decodeMessage(k.getFrequencies()))
 	
 	'''
