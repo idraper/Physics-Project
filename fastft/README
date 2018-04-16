@@ -1,0 +1,160 @@
+
+ #############################################################
+ #  Important information about the Fast Fourier Transform:  #
+ #############################################################
+    Introduction: What is the FFT?
+ ====================================
+ 
+ The FFT (abbreviation for Fast Fourier Transform) is an efficient way to calculate the
+ DFT (abbreviation for Discrete Fourier Transform). It does this by employing the use
+ of symmetry in calculating complex exponentials to reduce computations from a factor
+ of N^2 to a factor of N log N.
+
+    Section 1: Terms and Defintions
+ =====================================
+
+ 1) Time Domain Terms:
+  --> Sampling Rate (Fs) := Number of data samples acquired per second
+  --> Frame Size (T) := Amount of time data collected to perform a Fourier transform
+  --> Block Size (N) := Total number of data samples acquired during one frame
+
+ 2) Frequency Domain Terms:
+  --> Bandwidth (Fmax) := Highest frequency that is captured in the Fourier transform, equal to half the 
+                          sampling rate. (aka Nyquist frequency).
+  --> Spectral Lines (SL) := After Fourier transform, total number of frequency domain samples.
+  --> Frequency Resolution (Delta f) := Spacing between samples in the frequency domain.
+
+ 3) Sampling Rate (Fs)
+    a. Sampling Frequency/Fs number of data sampels acquired per second.
+    b. Important to determine maximum amplitude and correct waveform of the signal.
+  * c. Sample at least 10x faster than highest frequency of interest to get close to correct peak amplitude
+       in the time domain.
+    d. Obtaining the correct amplitude in the frequency domain only requires sampling twice the highest frequency
+       of interest, but anti-aliasing filter (window function) makes requirement 2.5x frequency of interest.
+   
+    e. Fs = 1 / (Delta t), where Delta t is the sampling interval or amount of time between samples collected in the
+       time domain. Smaller delta t gives more accurate peaks in time domain.
+
+ 4) Block Size (N)
+    a. Total number of time data points captured to perform a fourier transform.
+
+ 5) Frame Size (T)
+  * a. The total time (T) to acquire one block of data. Frame size is block size (N) over sampling frequency (Fs).
+       It is also the block size times the time resolution (Delta t).
+    --> T = N / Fs
+    --> T = N * Delta t
+    
+    b. When performing averages, different meanings to total amount of time:
+       i. Total time to acquire one block (T)
+       ii. Total time to average -- if multiple blocks are to be averaged, the total time is
+           the time to acquire each block.
+
+ 6) Bandwidth (Fmax)
+    a. The maximum frequency that can be analyzed, which is half the sampling frequency. Nyquist
+       criterion requires setting the sampling rate at least twice the maximum frequency of interest.
+    --> Bandwidth = Fmax = 1/2 Fs
+  * b. Usable bandwith may be less than theoretical limit of 1/2 sampling rate.
+
+ 7) Spectral Lines (SL)
+    a. After performing the Fourier transform, the spectral lines (SL) are the total number of frequency domain
+       data points. Two values at each line--amplitude and phase value.
+    --> SL = 1/2 N
+
+ 8) Frequency Resolution (Delta f)
+    a. The spacing between data points in frequency, which is the bandwith divided by the spectral lines.
+    --> Delta f = Fmax / SL
+
+ 9) Digital Signal Processing Relationships
+    a. The different parameters can be related to each other by:
+    --> 1/T = Fmax / SL = Fs / N = Delta f
+
+    b. "Golden equation of signal processing" relates frame size (T) and frequency resolution (Delta F)
+    1/T = Delta f
+
+    c. to make finer (more precise) the desired frequency resolution, longer acquistion times.
+
+ From: https://community.plm.automation.siemens.com/t5/Testing-Knowledge-Base/Digital-Signal-Processing-Sampling-Rates-Bandwidth-Spectral/ta-p/402991. Accessed 15 April 2018.
+
+
+      Section 2: Steps of Performing the FFT
+ ==============================================
+
+ Important steps for the algorithm we are using (the Cooley & Tuckey algorithm)
+
+    1) Apply a "windowing" function to reduce aliasing of the transform.
+    2) Zero pad input vector to length of the next power of two.
+    3) Bit-reverse the vector--Basically, split the vector into even and odd parts, then split those into even and odd parts, and so on, until each vector has exactly one
+        even part and exactly one odd part. Then recombine the vectors with the even parts
+        on the "left" of the vector (First half of the indices) and the odd parts on the
+        "right" of the vector. (Second half of the indices).
+    4) Perform the transform.
+
+     Section 3: The Window Function
+ =====================================
+
+ The Hann window is the window we will be using to alias the signal. This
+ is to make the edges continous and reduce "aliasing" effects due to jump discontinuities
+ at the "edges" of the block data. This is because when we do the FFT, we think of the end
+ of the data as wrapping around and forming a cyclic pattern, and so the window function ensures
+ that this happens.
+
+ Implementation is simple:
+ x (the vector to transform) is equal to data of the signal vector s multiplied by the hanning window function w.
+ ie. x[n] = s[n] * w[n]
+
+ The function we are using is w[n] = 1/2 (1 - Cos[(2 Pi n)/(N - 1)]) or w[n] = sin^2 [(Pi n)/(N - 1)],
+ where N = block size and n is the index.
+
+
+     Section 4: Bit Reversal
+ ===============================
+
+ Bit-Reversal Algorithm Examples
+ For input array of length two (0 and 1)
+ --> No change: 0 is 0, 1 is 1
+
+ For input array of length four (0, 1, 2, 3)
+ 0 --> 0 (00 --> 00)
+ 1 --> 2 (01 --> 10)
+ 2 --> 1 (10 --> 01)
+ 3 --> 3 (11 --> 11)
+
+ For input array of length eight (1,2,3,4,5,6,7)
+ 0 --> 0 (000 --> 000)
+ 1 --> 4 (001 --> 100)
+ 2 --> 2 (010 --> 010)
+ 3 --> 6 (011 --> 110)
+ 4 --> 1 (100 --> 001)
+ 5 --> 5 (101 --> 101)
+ 6 --> 3 (110 --> 011)
+ 7 --> 7 (111 --> 111)
+
+ And so on. As you can see, the bit reversal does not turn on or off any of the bit configurations,
+ it simply rotates the bits 180* degress or reverses their order. The bit reversal algorithm does this for each
+ index of an input array, preparing it for use in the FFT.
+
+   Section 5: FFT Algorithm
+ =====================
+ 
+ We are using 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
