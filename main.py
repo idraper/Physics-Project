@@ -18,18 +18,18 @@ if __name__ == "__main__":
 	
 	w = Wav_Manager()
 	w.newWave(k.getFrequencies())
-	w.saveToFile()
+	#w.saveToFile()
 	#w.play()
-	#w.startAudio()
-	#w.startStream()
-	'''
+	w.startAudio()
+	w.startStream()
+	
 	try:
 		while True:
 			w.listen()
 	except KeyboardInterrupt:
 		pass
-	'''
 	
+	'''
 	conn = Socket()
 	mode = input('Mode: ')
 	if mode == 's':
@@ -43,6 +43,7 @@ if __name__ == "__main__":
 		k = Key("")
 		k.set(num, start, offset, order, count)
 		print ('Decoded from real time:\n', k.decodeMessage([32500, 33750, 29250, 34000, 30750, 13000, 30250, 34750, 32250]))
+	'''
 		
 	'''
 	plt.plot(w.getFile()[1][:150])

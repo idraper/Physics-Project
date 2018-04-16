@@ -1,7 +1,7 @@
 import numpy as np
 
 class Key():
-	def __init__(self, me='', f='encryption', sF=5000, sO=250):
+	def __init__(self, me='', f='encryption', sF=500, sO=100):
 		self.data = me.lower()
 		self.size = len(self.data)
 		self.startFreq = sF
