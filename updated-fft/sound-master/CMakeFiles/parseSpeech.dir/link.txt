@@ -1,0 +1,1 @@
+/usr/bin/c++      CMakeFiles/parseSpeech.dir/src/wav-file.cc.o CMakeFiles/parseSpeech.dir/main.cc.o  -o parseSpeech -rdynamic 

@@ -1,0 +1,3 @@
+/users/guest/j/jnutt1/school/phys123/dft_expanded/sound-master/CMakeFiles/edit_cache.dir
+/users/guest/j/jnutt1/school/phys123/dft_expanded/sound-master/CMakeFiles/rebuild_cache.dir
+/users/guest/j/jnutt1/school/phys123/dft_expanded/sound-master/CMakeFiles/parseSpeech.dir
