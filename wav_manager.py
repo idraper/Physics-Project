@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import scipy.fftpack
 
 from key import Key
+from wave_math import FastFFT
 
 class Wav_Manager():
 	def __init__(self, fs=44100, s=44100, a=100, t=.1):
@@ -57,14 +58,15 @@ class Wav_Manager():
 		print("* Preview completed!")
 		
 	def listen(self):
-		
-		#data = np.fromstring(self.stream.read(self.CHUNK),dtype='int16')
-		data = np.fromstring(self.y,dtype='int16')
+		data = np.fromstring(self.stream.read(self.CHUNK),dtype='int16')
+		#data = np.fromstring(self.y,dtype='int16')
+		fft = FastFFT(data)
 		
 		plt.pause(.00001)
 		plt.gcf().clear()
-		#x = np.fft.fftfreq(1024, d = 1.0 / (2*self.RATE))
+		x = np.fft.fftfreq(1024, d = 1.0 / (2*self.RATE))
 		x = np.linspace(0, self.RATE, len(data))
+		#plt.plot(x[:int(len(x)/2)], [np.sqrt(c.real ** 2 + c.imag ** 2)*(1/self.RATE) for c in fft.calcFreqs()][:int(len(data)/2)])
 		plt.plot(x[:int(len(x)/2)], [np.sqrt(c.real ** 2 + c.imag ** 2)*(1/self.RATE) for c in np.fft.fft(data)][:int(len(data)/2)])
 		plt.draw()
 		return data
