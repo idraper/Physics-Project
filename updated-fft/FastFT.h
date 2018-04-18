@@ -15,13 +15,13 @@
 #include <vector>
 
 typedef struct compl_num {
-    double real;
-    double imag;
+    long double real;
+    long double imag;
 } compl_num;
 
 typedef struct frequency {
-    double value; // What is the frequency?
-    double magnitude; // How much of the frequency?
+    long double value; // What is the frequency?
+    long double magnitude; // How much of the frequency?
 //  double phase_shift;
 } frequency;
 
@@ -33,12 +33,12 @@ class FastFT {
         * index represents time at that location and the value is the amplitude of the signal at that time.
         *
         * Arguments: unsigned long sample frequency--> the sample rate of the signal analyzed.
-        *            vector<double>& amplitudes--> a vector passed by reference containing the signal data vs time
-        *            vector<double>& frequencies--> a vector passed by reference of size 0 to contain the calculated
+        *            vector<long double>& amplitudes--> a vector passed by reference containing the signal data vs time
+        *            vector<long double>& frequencies--> a vector passed by reference of size 0 to contain the calculated
         *                                           frequencies.
         */
 
-        FastFT(unsigned long sample_rate, std::vector<double> amplitudes, 
+        FastFT(unsigned long sample_rate, std::vector<long double> amplitudes, 
             std::vector<frequency>& frequencies, char useWindow = ' ');
 
     private:
@@ -56,7 +56,7 @@ class FastFT {
         unsigned TakeLogTwo(unsigned long val);
         void ZeroPad();
         void ApplyHanningWindow();
-        void BitReverseVector(std::vector<double>& vector_to_reverse, unsigned long size);
+        void BitReverseVector(std::vector<long double>& vector_to_reverse, unsigned long size);
         
     
         /**
@@ -70,12 +70,12 @@ class FastFT {
         unsigned long sample_rate; 
         unsigned long spectral_lines;
         unsigned long N; // Number of samples
-        double frame_size;
+        long double frame_size;
            
         /**
          * Holds the amplitude data of samples in a signal.
         */ 
-        std::vector<double> amplitudes;
+        std::vector<long double> amplitudes;
         std::vector<compl_num> compl_amplitudes;        
 
         /** Pointer to an array of calculated frequencies */	

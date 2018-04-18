@@ -11,18 +11,18 @@ using std::endl;
 using std::ofstream;
 
 typedef struct signal {
-    double t; // time
-    double x; // displacement
+    long double t; // time
+    long double x; // displacement
 } signal;
 
 
 int main() {
     unsigned long sample_rate = 0;
     unsigned long sample_size = 0;
-    double frame_size = 0.0;
-    double deltaT = 0.0; 
-    double omega = N_PI * 2.0;
-    double frequency = 0.0;
+    long double frame_size = 0.0;
+    long double deltaT = 0.0; 
+    long double omega = N_PI * 2.0;
+    long double frequency = 0.0;
     signal tmp;
     tmp.t = 0.0;
     tmp.x = 0.0;
@@ -42,8 +42,8 @@ int main() {
     cout << "You entered: " << frequency << endl;
 
     omega = omega * frequency;
-    frame_size = (double) sample_size / (double) sample_rate;
-    deltaT = 1.0 / (double)sample_rate;
+    frame_size = (long double) sample_size / (long double) sample_rate;
+    deltaT = 1.0 / (long double)sample_rate;
    
     cout << endl << "Derived constants: " << endl;
     cout << "Omega: " << omega << endl;
@@ -52,9 +52,8 @@ int main() {
 
 
     for (unsigned int i = 0; i < sample_size; i++) {
-        tmp.t = (double)i * deltaT;
-        tmp.x = 100 * cos(omega * tmp.t);
-
+        tmp.t = (long double)i * deltaT;
+        tmp.x = 15 * cos(omega * tmp.t); 
 #ifdef DEBUG_ON
         cout << "@time: " << tmp.t << "; x = " << tmp.x << endl;
 #endif

@@ -14,12 +14,12 @@ using std::endl;
  * index represents time at that location and the value is the amplitude of the signal at that time.
  *
  * Arguments: unsigned long sample frequency--> the sample rate of the signal analyzed.
- *            vector<double> amplitudes--> a vector passed containing the signal data vs time
- *            vector<double>& frequencies--> a vector passed by reference of size 0 to contain the calculated
+ *            vector<long double> amplitudes--> a vector passed containing the signal data vs time
+ *            vector<long double>& frequencies--> a vector passed by reference of size 0 to contain the calculated
  *                                           frequencies.
 */
 
-FastFT::FastFT(unsigned long sample_rate, std::vector<double> amplitudes, 
+FastFT::FastFT(unsigned long sample_rate, std::vector<long double> amplitudes, 
     std::vector<frequency>& frequencies, char useWindow) :
         sample_rate(sample_rate), amplitudes(amplitudes), frequencies(&frequencies) { 
     char window = 'w';
@@ -50,7 +50,7 @@ FastFT::FastFT(unsigned long sample_rate, std::vector<double> amplitudes,
 
     this->spectral_lines = N / 2;
     this->N = this->amplitudes.size();
-    this->frame_size = (double)N / (double)sample_rate; 
+    this->frame_size = (long double)N / (long double)sample_rate; 
 
     // Order the vector in bit-reversed index order. (See Readme for more details).
     cout << "Starting bit reversal" << endl;
@@ -157,10 +157,10 @@ void FastFT::ZeroPad() {
 */
 
 void FastFT::ApplyHanningWindow() {
-    const double k = 2 * M_PI / (this->N - 1);
+    const long double k = 2 * M_PI / (this->N - 1);
     
     for (unsigned long n = 0; n < this->N; n++) {
-        this->amplitudes.at(n) = this->amplitudes.at(n) * (1.0/2.0 * (1.0 - cos(k * (double)n)));
+        this->amplitudes.at(n) = this->amplitudes.at(n) * (1.0/2.0 * (1.0 - cos(k * (long double)n)));
     }
 
     return;
@@ -171,21 +171,22 @@ void FastFT::ApplyHanningWindow() {
  * be in bit-reversed order.
 */
 
-void FastFT::BitReverseVector(std::vector<double>& vector_to_reverse, unsigned long size) {
-    std::vector<double> even;
-    std::vector<double> odd;
+void FastFT::BitReverseVector(std::vector<long double>& vector_to_reverse, unsigned long size) {
+    std::vector<long double> even;
+    std::vector<long double> odd;
+    unsigned long stride = 2;
 
     // Base case: a vector of size 2 is already bit-reversed.
-    if (size == 2) {
+    if (size == stride) {
         return;
     }
 
     // Populate the even and odd vectors with their respective values.   
-    for (unsigned long i = 0; i < (vector_to_reverse.size()); i += 2) {
+    for (unsigned long i = 0; i < (size); i += stride) {
          even.push_back(vector_to_reverse.at(i));
     }
     
-    for (unsigned long i = 1; i < (vector_to_reverse.size()); i += 2) {
+    for (unsigned long i = 1; i < (size); i += stride) {
         odd.push_back(vector_to_reverse.at(i));
     }
 
@@ -194,13 +195,13 @@ void FastFT::BitReverseVector(std::vector<double>& vector_to_reverse, unsigned l
     BitReverseVector(odd, odd.size()); 
 
     // Compile the even vector to the first half of the starting vector...
-    for (unsigned long i = 0; i < size/2; i++) {
+    for (unsigned long i = 0; i < size/stride; i++) {
         vector_to_reverse.at(i) = even.at(i);
     }
 
     // ...and the odd to the second half.
-    for (unsigned long i = 0; i < size / 2; i++) { 
-        vector_to_reverse.at(size/2 + i) = odd.at(i);
+    for (unsigned long i = 0; i < size/stride; i++) { 
+        vector_to_reverse.at(size/stride + i) = odd.at(i);
     }
 
 #ifdef DEBUG_ON
@@ -251,8 +252,12 @@ void FastFT::CalcFFT() {
     tmp.imag = 0.0;
 
     // The twiddle factor base value
-    double WN = M_PI * 2.0 / (double)N;
+    long double WN = M_PI * 2.0 / (long double)N;
+    cout << " WN: " << WN << endl;
     
+    for (int i = 0; i < 0; i++) {}    
+
+
     /** This is the actual FFT.
      * It operates based on the Cooley & Tukey method--taking an N sample DFT and subdividing it
      * into 2 N/2 sample DFTS, breaking up the signal vector until it operates on 2 1point DFTS (which is easy to calculate).
@@ -272,7 +277,8 @@ void FastFT::CalcFFT() {
         unsigned long little_jump = big_jump >> 1;
         curr_stage = curr_stage >> 1;
         cout << "Current stage : " << TakeLogTwo(curr_stage) << endl;
-
+        cout << "Big jump: " << big_jump << endl;
+        cout << "Little jump: " << little_jump << endl;
         // Step through "big jump" of elements 
         for (unsigned long i = 0; i < N; i += big_jump) {
             for (unsigned long k = 0; k < little_jump; k++) {
@@ -283,20 +289,36 @@ void FastFT::CalcFFT() {
                 // Get the Wn^K Twiddle factors
                 unsigned long k_1 = (k * curr_stage);
                 unsigned long k_2 = k_1 + N/2;
-                double WnK_1 = WN * (double) k_1;
-                double WnK_2 = WN * (double) k_2;                
+                long double WnK_1 = WN * (long double) k_1;
+                long double WnK_2 = WN * (long double) k_2;                
+
+                
+
+/*
                 twiddle1.real = cos (WnK_1);
                 twiddle1.imag = sin (WnK_1); 
                 twiddle2.real = cos (WnK_2);
                 twiddle2.imag = sin (WnK_2);             
+*/
+
+                // Get the real & imaginary parts for the "odd" index
+                twiddle1.real = cos (WnK_1);
+                twiddle1.imag = sin (WnK_1); 
 
                 // Get the real & imaginary  parts for the "even" index
                 even.real = compl_amplitudes.at(index1).real;
                 even.imag = compl_amplitudes.at(index1).imag;
+                odd.real = twiddle1.real * compl_amplitudes.at(index2).real 
+                    - twiddle1.imag * compl_amplitudes.at(index2).imag;
+                odd.imag = twiddle1.real * compl_amplitudes.at(index2).imag 
+                    + twiddle1.imag * compl_amplitudes.at(index2).real;
 
-                // Get the real & imaginary parts for the "odd" index
-                odd.real = compl_amplitudes.at(index2).real;
-                odd.imag = compl_amplitudes.at(index2).imag;
+                compl_amplitudes.at(index1).real = even.real + odd.real;
+                compl_amplitudes.at(index1).imag = even.imag + odd.imag;
+                compl_amplitudes.at(index2).real = even.real - odd.real;
+                compl_amplitudes.at(index2).imag = even.imag - odd.imag;
+                
+/*
 
                 // Top part of butterfly               
                 // Real calculations
@@ -311,6 +333,8 @@ void FastFT::CalcFFT() {
                 
                 // Imaginary Calculations
                 compl_amplitudes.at(index2).imag = even.imag + twiddle2.real * odd.imag + twiddle2.imag * odd.imag;
+
+*/
             }
         }
     }
@@ -345,10 +369,10 @@ void FastFT::CalcFrequencies() {
         tmp.value = i / frame_size;
         
         // Find the magnitude of the frequency
-        tmp.magnitude = sqrt(pow(compl_amplitudes.at(i).real, 2.0) + pow(compl_amplitudes.at(i).imag,2.0));
+        tmp.magnitude = sqrt(pow(compl_amplitudes.at(i).real, 2.0) + pow(compl_amplitudes.at(i).imag, 2.0)); 
 
         // Normalize the results
-        tmp.magnitude = (tmp.magnitude * 2.0) / (double) N; 
+        tmp.magnitude = (tmp.magnitude * 2.0) / (long double) N; 
         frequencies->push_back(tmp);
 
     }
