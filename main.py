@@ -8,7 +8,7 @@ from networking import MySocket as Socket
 from wave_math import Math
 
 if __name__ == "__main__":
-	k = Key("new test message")
+	k = Key("a")
 	print ('Original:\n', k.getMessage())
 	k.saveToFile()
 	print ()
@@ -36,8 +36,9 @@ if __name__ == "__main__":
 	count = count[:-4]
 	count += "\']"
 	'''
+	#10.24.200.254
 	
-	
+	d = Key("")
 	
 	conn = Socket()
 	mode = input('Mode: ')
@@ -48,20 +49,21 @@ if __name__ == "__main__":
 		conn.close()
 	else:
 		print ('recieving data')
-		num, start, offset, order, count = conn.recieve('10.24.196.104', 8000)
-		k = Key("")
-		k.set(num, start, offset, order, count)
-		print ('Decoded from real time:\n', k.decodeMessage([32500, 33750, 29250, 34000, 30750, 13000, 30250, 34750, 32250]))
-		
+		num, start, offset, order, count = conn.recieve('110.24.196.104', 8000)
+		d.set(start, offset, order, count)
+		#print ('Decoded from real time:\n', k.decodeMessage([32500, 33750, 29250, 34000, 30750, 13000, 30250, 34750, 32250]))
+	w.play()
+	'''
 	try:
 		while True:
 			data = w.listen()
-			decode = Key()
-			decode.set(k.getStart(), k.getOff(), order, count)
+			#decode = Key()
+			#decode.set(k.getStart(), k.getOff(), order, count)
 			print (data)
-			print ('Decoded (real):\n', decode.decodeMessage(data))
+			print ('Decoded (real):\n', d.decodeMessage(data))
 	except KeyboardInterrupt:
 		pass
+	'''
 		
 	'''
 	plt.plot(w.getFile()[1][:300])

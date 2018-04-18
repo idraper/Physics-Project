@@ -17,10 +17,10 @@ class Key():
 		
 	def set(self, s, oF, oR, cnt):
 		#self.size = self.unscrambleInt(int(num, 0))
-		#self.offset = self.unscrambleInt(int(oF))
-		#self.startFreq = self.unscrambleInt(int(s))
-		self.offset = (int(oF))
-		self.startFreq = (int(s))
+		self.offset = self.unscrambleInt(oF)
+		self.startFreq = self.unscrambleInt(s)
+		#self.offset = (int(oF))
+		#self.startFreq = (int(s))
 		self.order = oR
 		self.count = cnt
 		

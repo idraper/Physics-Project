@@ -92,11 +92,11 @@ class Wav_Manager():
 			self.avgCheck = False
 			
 		self.avg = (self.avg + fft) / 2
-		plt.plot(x[:int(len(x)/2)], self.avg)
+		plt.plot(x[:int(len(x)/2)], fftData[:int(len(fftData)/2)])
 		
 		#print (x)
-		#i = [x*10 for x, c in enumerate(fftData[:int(len(fftData)/2)]) if np.sqrt(c.real ** 2 + c.imag ** 2)*(1/norm) > .6]
-		i = [x*100 for x, c in enumerate(self.avg) if c > .6]
+		i = [x[t] for t, c in enumerate(fftData[:int(len(fftData)/2)]) if np.sqrt(c.real ** 2 + c.imag ** 2)*(1/norm) > .5]
+		#i = [x[t] for t, c in enumerate(self.avg) if c > .4]
 		
 		return i
 		
