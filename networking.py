@@ -1,4 +1,4 @@
-import socket, keyboard
+import socket
 from time import sleep
 
 class MySocket:

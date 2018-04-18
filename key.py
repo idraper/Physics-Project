@@ -1,7 +1,7 @@
 import numpy as np
 
 class Key():
-	def __init__(self, me='', f='encryption', sF=500, sO=100):
+	def __init__(self, me='', f='encryption', sF=-2500, sO=100):
 		self.data = me.lower()
 		self.size = len(self.data)
 		self.startFreq = sF
@@ -15,12 +15,19 @@ class Key():
 		self.count = None
 		
 		
-	def set(self, num, s, oF, oR, cnt):
-		self.size = self.unscrambleInt(int(num, 0))
-		self.offset = self.unscrambleInt(int(oF, 0))
-		self.startFreq = self.unscrambleInt(int(s, 0))
+	def set(self, s, oF, oR, cnt):
+		#self.size = self.unscrambleInt(int(num, 0))
+		#self.offset = self.unscrambleInt(int(oF))
+		#self.startFreq = self.unscrambleInt(int(s))
+		self.offset = (int(oF))
+		self.startFreq = (int(s))
 		self.order = oR
 		self.count = cnt
+		
+	def getStart(self):
+		return self.startFreq
+	def getOff(self):
+		return self.offset
 		
 		
 	def newMessage(self, m):
@@ -124,42 +131,47 @@ class Key():
 		return (num, start, offset, order, count)
 		
 	def decodeMessage(self, freq, fromFile=False):
-		oPos = 0 	# points to order
-		cPos = 0 	# points to count
-		if fromFile:
-			num, start, offset, order, count = self.readFile()
-			out = np.zeros(num , dtype='str')
-			
-			m = self.freqToLexo(freq, start, offset)
-			
-			for char in m:
-				while count[cPos] > 0:
-					out[order[oPos]] = char
-					oPos += 1
-					count[cPos] -= 1
-				cPos += 1
-			
-			return ''.join(str(x) for x in out)
-		else:
-			self.order = self.order[2:-2]
-			self.count = self.count[2:-2]
-			order = [self.unscrambleInt(x) for x in list(self.order.split("', '"))]
-			count = [self.unscrambleInt(x) for x in list(self.count.split("', '"))]
-			out = np.zeros(self.size, dtype='str')
-			m = self.freqToLexo(freq, self.startFreq, self.offset)
-			for char in m:
-				while count[cPos] > 0:
-					out[order[oPos]] = char
-					oPos += 1
-					count[cPos] -= 1
-				cPos += 1
-			
-			return ''.join(str(x) for x in out)
+		try:
+			oPos = 0 	# points to order
+			cPos = 0 	# points to count
+			if fromFile:
+				num, start, offset, order, count = self.readFile()
+				m = self.freqToLexo(freq, start, offset)
+				out = np.zeros(num , dtype='str')
+				
+				for char in m:
+					while count[cPos] > 0:
+						out[order[oPos]] = char
+						oPos += 1
+						count[cPos] -= 1
+					cPos += 1
+				
+				return ''.join(str(x) for x in out)
+			else:
+				m = self.freqToLexo(freq, self.startFreq, self.offset)
+				self.order = self.order[2:-2]
+				self.count = self.count[2:-2]
+				order = [int(x) for x in list(self.order.split("', '"))]
+				count = [int(x) for x in list(self.count.split("', '"))]
+				n = 0
+				for i in count:
+					n += i
+				out = np.zeros(n, dtype='str')
+				for char in m:
+					while count[cPos] > 0:
+						out[order[oPos]] = char
+						oPos += 1
+						count[cPos] -= 1
+					cPos += 1
+				return ''.join(str(x) for x in out)
+		except:
+			m = np.zeros(5, dtype='str')
+			return '?'.join(str(x) for x in m)
 			
 	def unscrambleInt(self, num):
 		try:
 			return num - self.keyVal
-		except:
+		except TypeError:
 			return int(num, 0) - self.keyVal
 	
 	def unscramble(self, num):
